@@ -28,24 +28,20 @@ class KeyGenerator:
     def applyPermutation(self) -> None:
         self._f_PERMUTED_KEY = self.getKeyIndexes() # Une table de permutation 
         
-        for cle, val in self._f_PERMUTED_KEY.items():
-            print("La clé {} contient la valeur {}.".format(cle, val))
-        print("\n")
-
         for i in self._f_H_PERMUTE:
             idx = i
             for j in self._f_PERMUTED_KEY.keys():
                 if(idx == j):
                     self._f_H_PERMUTED_VALUES.append(self._f_PERMUTED_KEY[j])
                     continue
-        print("La valeur de la clé après permutation est : ",*self._f_H_PERMUTED_VALUES)
+        print("* La valeur de la clé après permutation est : ",*self._f_H_PERMUTED_VALUES)
         print("\n")
 
     def splitKey(self) -> None:
         self._f_key1_prime = self._f_H_PERMUTED_VALUES[:4]
         self._f_key2_prime = self._f_H_PERMUTED_VALUES[4:]
         
-        print("La clé est maintenant divisé en 2 blocks :")
+        print("* La clé est maintenant divisé en 2 blocks :")
         print("k1' = ", *self._f_key1_prime)
         print("k2' = ", *self._f_key2_prime)
         print("\n")
@@ -58,7 +54,7 @@ class KeyGenerator:
                 self._f_key1.append(operator.xor(self._f_key1_prime[j], self._f_key2_prime[j]))
                 j = j + 1
             i = i + 1
-        print("K1 = k1' XOR k2' = ", *self._f_key1)
+        print("* K1 = k1' XOR k2' = ", *self._f_key1)
     
     def applyKey2Operator(self) -> None:
         i = 0
@@ -68,7 +64,7 @@ class KeyGenerator:
                 self._f_key2.append(operator.and_(self._f_key2_prime[j], self._f_key1_prime[j]))
                 j = j + 1
             i = i + 1
-        print("K2 = k2' AND k1' = ", *self._f_key2)
+        print("* K2 = k2' AND k1' = ", *self._f_key2)
         print("\n")
 
     # Shift keys to left    
@@ -77,7 +73,7 @@ class KeyGenerator:
         lastTwoValues = self._f_key1[2:4]
 
         self._f_key1 = lastTwoValues + fistTwoValues
-        print("Le décalage à gauche de K1 = ", *self._f_key1)
+        print("* Le décalage à gauche de K1 = ", *self._f_key1)
 
     # Shift keys to right
     def leftRight(self) -> None:
@@ -85,12 +81,13 @@ class KeyGenerator:
         lastValue = self._f_key2[3:]
 
         self._f_key2 = lastValue + fistThirdValues
-        print("Le décalage à droite de K2 = ", *self._f_key2)
+        print("* Le décalage à droite de K2 = ", *self._f_key2)
     
     #Output keys values
     def outputKeys(self) -> None:
+        print("_______________________________________")
         print("({}, {})".format(self._f_key1, self._f_key2))
-    
+        print("_______________________________________")
     # Getting K1 value
     def getK1(self) -> list:
         return self._f_key1

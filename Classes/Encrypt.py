@@ -16,6 +16,8 @@ class Encrypt:
     _D1        =   list()
     _D2        =   list()
     _C         =   list()
+    _C_indexes         =   list()
+    _TEXT_CHIFFRE = list()
 
     def __init__(self, Bloc:int, PI:int) -> None:
         self._PI_PERMUTE       =    PI
@@ -25,13 +27,34 @@ class Encrypt:
         PI_keys = dict()
         PI_keys = self.get_Concatenation_Indexes(P) # Une table de permutation 
         inversePI = list()
-        
-        for cle, val in PI_keys.items():
-            if cle == val:
-                    inversePI.append(cle)
-            continue
-        print("L'inverse de PI est : ", *inversePI)
+
+        print("* PI keys : ", *PI_keys.keys())
+        print("* PI values : ", *PI_keys.values())
+               
+        for i in PI_keys.keys():
+            idx = i
+            for val in PI_keys.values():
+                if(idx == PI_keys[val]):
+                    inversePI.append(val)
+                    continue
         print("\n")
+        print("* L'inverse de PI est : ", *inversePI)
+        print("\n")
+
+        self._C_indexes = self.get_Concatenation_Indexes(self._C) # Une table des indexes de C
+        
+        for i in inversePI:
+            idx = i
+            for val in self._C_indexes.keys():
+                if(idx == val):
+                    self._TEXT_CHIFFRE.append(self._C_indexes[val])
+                    continue
+        print("__________________________________________")
+        print("Le Texte chiffré est : ", *self._TEXT_CHIFFRE)
+        print("__________________________________________")
+
+    def get_encrypted_text(self) -> list:
+        return self._TEXT_CHIFFRE
 
     def get_Concatenation_Indexes(self, list:list) -> dict:
         permutedC = dict() 
@@ -62,21 +85,21 @@ class Encrypt:
                 if(idx == j):
                     self._PI_PERMUTED_VALUES.append(self._PERMUTED_KEY[j])
                     continue
-        print("La valeur du bloc N après permutation est : ", *self._PI_PERMUTED_VALUES)
+        print("* La valeur du bloc N après permutation est : ", *self._PI_PERMUTED_VALUES)
         print("\n")
 
     def splitBloc(self) -> None:
         self._Go = self._PI_PERMUTED_VALUES[:4]
         self._Do = self._PI_PERMUTED_VALUES[4:]
         
-        print("La clé est maintenant divisé en 2 blocks :")
+        print("* La clé est maintenant divisé en 2 blocks :")
         print("Go' = ", *self._Go)
         print("Dà' = ", *self._Do)
         print("\n")
     
     def concatenate(self) -> None:
         self._C = self._G2 + self._D2
-        print("La concatenation C = ", *self._C)
+        print("* La concatenation C = ", *self._C)
 
     def calculateSecondRound(self, P:list, k2:list) -> None:
         self._G1_PERMUTATION =  self.applyRoundPermutation(P, 1)
@@ -100,7 +123,7 @@ class Encrypt:
                 self._G2.append(operator.xor(self._D1[j], G1_K2_value[j]))
                 j = j + 1
             i = i + 1
-        print("G2 = D1 XOR (G1 v k2) = ", *self._G2)
+        print("* G2 = D1 XOR (G1 v k2) = ", *self._G2)
 
     def apply_D2_Operator(self, k:list) -> None:
         i = 0
@@ -110,7 +133,7 @@ class Encrypt:
                 self._D2.append(operator.xor(self._G1_PERMUTATION[j], k[j]))
                 j = j + 1
             i = i + 1
-        print("D2 = P(G1) XOR k2 = ", *self._D2)
+        print("* D2 = P(G1) XOR k2 = ", *self._D2)
 
     def calculateFirstRound(self, k1:list) -> None:
         self.apply_D1_Operator(k1)
@@ -133,7 +156,7 @@ class Encrypt:
                 self._G1.append(operator.xor(self._Do[j], Go_K1_value[j]))
                 j = j + 1
             i = i + 1
-        print("G1 = Do XOR (Go v k1) = ", *self._G1)
+        print("* G1 = Do XOR (Go v k1) = ", *self._G1)
 
 
     def apply_D1_Operator(self, k:list) -> None:
@@ -144,11 +167,11 @@ class Encrypt:
                 self._D1.append(operator.xor(self._Go_PERMUTATION[j], k[j]))
                 j = j + 1
             i = i + 1
-        print("D1 = P(Go) XOR k1' = ", *self._D1)
+        print("* D1 = P(Go) XOR k1' = ", *self._D1)
 
     def calculateD1(self, P:list) -> None:
             self._Go_PERMUTATION = self.applyRoundPermutation(P, 0)
-            print("La Permutation de Go est : ", *self._Go_PERMUTATION)
+            print("* La Permutation de Go est : ", *self._Go_PERMUTATION)
             print("\n")
     
     def applyRoundPermutation(self, PERMUTE:list, G_index:int) -> list:
